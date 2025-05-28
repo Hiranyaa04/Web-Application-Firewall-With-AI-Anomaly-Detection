@@ -93,7 +93,7 @@ WAF PROJECT/
 
 
 # Clone the repository
-git clone https://github.com/yourusername/ai-waf.git
+git clone https://github.com/Hiranyaa04/Web-Application-Firewall-With-AI-Anomaly-Detection.git
 cd ai-waf
 
 # Create a virtual environment
