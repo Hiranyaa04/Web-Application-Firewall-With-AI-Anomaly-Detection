@@ -22,9 +22,9 @@ LOG_FILE = "waf_logs.json"
 app.config['MAIL_SERVER'] = 'smtp.gmail.com'
 app.config['MAIL_PORT'] = 587
 app.config['MAIL_USE_TLS'] = True
-app.config['MAIL_USERNAME'] = 'oshadee265@gmail.com'   # replace
-app.config['MAIL_PASSWORD'] = 'bicu qrlk qlef acnk'       # use app-specific password
-app.config['MAIL_DEFAULT_SENDER'] = 'oshadee265@gamil.com'
+app.config['MAIL_USERNAME'] = 'user@gmail.com'   # replace
+app.config['MAIL_PASSWORD'] = 'app-password'       # use app-specific password
+app.config['MAIL_DEFAULT_SENDER'] = 'user@gamil.com'
 
 mail = Mail(app)
 
