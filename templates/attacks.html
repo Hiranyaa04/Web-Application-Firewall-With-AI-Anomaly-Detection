@@ -1,0 +1,53 @@
+{% extends "base.html" %}
+{% block content %}
+<style>
+    .table-responsive {
+        overflow-x: auto;
+    }
+    td, th {
+        white-space: nowrap;
+    }
+    td.wrap-text {
+        white-space: normal;
+        word-wrap: break-word;
+        max-width: 300px;
+    }
+</style>
+<h2 class="mb-3">Blocked Attacks</h2>
+<a href="{{ url_for('export_logs', log_type='blocked') }}" class="btn btn-success mb-3">Export as CSV</a>
+<input class="form-control mb-3" id="searchInput" type="text" placeholder="Search by IP or Data">
+<div class="table-responsive">
+<table class="table table-bordered table-striped" id="logsTable">
+    <thead class="table-dark">
+        <tr>
+            <th onclick="sortTable(0)">Timestamp</th>
+            <th onclick="sortTable(1)">IP</th>
+            <th>Data</th>
+            <th onclick="sortTable(3)">Blocked</th>
+            <th>Attack Type</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for log in logs %}
+        <tr>
+            <td>{{ log.timestamp }}</td>
+            <td>{{ log.ip }}</td>
+            <td class="wrap-text">{{ log.data }}</td>
+            <td>{{ log.blocked }}</td>
+            <td>
+                {% if log.attack_type == "SQL Injection" %}
+                    <span class="badge bg-danger">SQL Injection</span>
+                {% elif log.attack_type == "XSS Attack" %}
+                    <span class="badge bg-warning text-dark">XSS Attack</span>
+                {% elif log.attack_type == "AI-Anomaly" %}
+                    <span class="badge bg-info text-dark">AI-Anomaly</span>
+                {% else %}
+                    <span class="badge bg-success">Normal</span>
+                {% endif %}
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+</div>
+{% endblock %}

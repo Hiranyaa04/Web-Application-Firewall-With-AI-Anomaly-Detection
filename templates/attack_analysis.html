@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Attack Analysis</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        .list-group-item {
+  font-weight: 600;
+}
+.list-group-item:nth-child(1) { background-color: rgba(220, 53, 69, 0.1); }  /* SQL Injection red */
+.list-group-item:nth-child(2) { background-color: rgba(255, 193, 7, 0.1); }  /* XSS yellow */
+.list-group-item:nth-child(3) { background-color: rgba(13, 202, 240, 0.1); } /* AI-Anomaly blue */
+.list-group-item:nth-child(4) { background-color: rgba(25, 135, 84, 0.1); }  /* Normal green */
+
+    </style>
+</head>
+<body class="bg-light">
+
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark px-4">
+    <a class="navbar-brand" href="/">🛡️ AI-WAF</a>
+    <div class="navbar-nav">
+        <a class="nav-link" href="/dashboard">All Logs</a>
+        <a class="nav-link" href="/requests">Allowed</a>
+        <a class="nav-link" href="/attacks">Blocked</a>
+        <a class="nav-link active" href="/attack-analysis">📊 Attack Analysis</a>
+    </div>
+</nav>
+
+<div class="container mt-4">
+    <div class="row">
+        <div class="col-md-5">
+            <div class="card p-3 shadow-sm mb-4">
+                <h5>Attack Type Distribution</h5>
+                <canvas id="attackChart" height="300"></canvas>
+            </div>
+        </div>
+        <div class="col-md-7">
+            <div class="card p-3 shadow-sm mb-4">
+                <h5>Summary</h5>
+                <ul class="list-group">
+                    {% set total = attack_data.values()|sum %}
+                    {% for attack, count in attack_data.items() %}
+                        {% set percent = (count / total * 100) | round(1) %}
+                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                            {{ attack }}
+                            <span class="badge bg-primary rounded-pill">{{ count }} ({{ percent }}%)</span>
+                        </li>
+                    {% endfor %}
+                </ul>
+            </div>
+        </div>
+    </div>
+
+   
+<script>
+const ctx = document.getElementById('attackChart').getContext('2d');
+const attackData = {{ attack_data | tojson }};
+const labels = Object.keys(attackData);
+const values = Object.values(attackData);
+
+// Map attack types to their colors, matching table badge colors
+const colorsMap = {
+    "SQL Injection": 'rgba(220, 53, 69, 0.7)',  // red (bg-danger)
+    "XSS Attack": 'rgba(255, 193, 7, 0.7)',     // yellow (bg-warning)
+    "AI-Anomaly": 'rgba(13, 202, 240, 0.7)',    // blue (bg-info)
+    "Normal": 'rgba(25, 135, 84, 0.7)'          // green (bg-success)
+};
+
+// Create background color array matching the order of labels
+const backgroundColors = labels.map(label => colorsMap[label] || 'rgba(108, 117, 125, 0.7)'); // fallback grey
+
+new Chart(ctx, {
+    type: 'doughnut',
+    data: {
+        labels: labels,
+        datasets: [{
+            label: 'Attack Types',
+            data: values,
+            backgroundColor: backgroundColors,
+            borderWidth: 1
+        }]
+    },
+    options: {
+        responsive: true,
+        plugins: {
+            legend: {
+                position: 'bottom'
+            }
+        }
+    }
+});
+
+</script>
+
+</body>
+</html>
